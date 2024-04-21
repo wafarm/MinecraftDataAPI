@@ -55,12 +55,13 @@ class PlayerDataGetter:
 				err
 			))
 
-	__ENTITY_DATE_REGEX = re.compile(r'^\w+ has the following entity data: .*$')
+	__ENTITY_DATE_REGEX = re.compile(r'^(.*?) has the following entity data: .*$')
 
 	def on_info(self, info: Info):
 		if not info.is_user:
-			if self.__ENTITY_DATE_REGEX.match(info.content):
-				player = info.content.split(' ')[0]
+			match = self.__ENTITY_DATE_REGEX.match(info.content)
+			if match:
+				player = match.group(1).split(' ')[-1]
 				task = self.get_queue_task(player)
 				if task is not None and task.count > 0:
 					task.queue.put(info.content)
